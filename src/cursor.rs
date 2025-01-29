@@ -6,6 +6,14 @@ pub enum CursorState {
     Default,
 }
 
+impl ToString for CursorState {
+    fn to_string(&self) -> String {
+        match self {
+            CursorState::Default => "default".to_string(),
+        }
+    }
+}
+
 impl Default for CursorState {
     fn default() -> Self {
         CursorState::Default
@@ -18,7 +26,8 @@ fn init_cursor(mut cmd: Commands, asset_server: Res<AssetServer>) {
     let state = CursorState::default();
 
     let sprite = {
-        let image = asset_server.load("cursor/default.png");
+        let path = format!("cursor/{}.png", state.to_string());
+        let image = asset_server.load(path);
         Sprite::from_image(image)
     };
 
