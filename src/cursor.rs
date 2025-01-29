@@ -1,4 +1,4 @@
-use crate::app::MainCamera;
+use crate::{app::MainCamera, render_layer::RenderLayer};
 use bevy::{prelude::*, window::PrimaryWindow};
 
 #[derive(Component)]
@@ -12,36 +12,40 @@ impl Default for CursorState {
     }
 }
 
-fn spawn_cursor(mut cmd: Commands, asset_server: Res<AssetServer>) {
+fn init_cursor(mut cmd: Commands, asset_server: Res<AssetServer>) {
     let transform = Transform::from_xyz(0., 0., 0.);
 
     let state = CursorState::default();
 
     let sprite = {
-        let image = asset_server.load("cursor-default.png");
+        let image = asset_server.load("cursor/default.png");
         Sprite::from_image(image)
     };
 
-    cmd.spawn((transform, sprite, state));
+    let layer = RenderLayer::Cursor;
+
+    cmd.spawn((transform, sprite, state, layer));
 }
 
+//TODO: this needs to be more readable
 fn update_cursor_position(
     mut cursor_info: Query<(&mut Transform, &CursorState)>,
     windows: Query<&Window, With<PrimaryWindow>>,
     camera: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
 ) {
     let (camera, camera_transform) = camera.single();
-    let (mut c_position, _c_state) = cursor_info.single_mut();
-    let m_position = windows.get_single().map(|window| window.cursor_position());
 
-    if let Ok(Some(m_position)) = m_position {
-        if let Ok(mapped_pos) = camera.viewport_to_world(camera_transform, m_position) {
-            c_position.translation = mapped_pos.origin.xy().extend(0.);
+    if let Ok(Some(m_position)) = windows.get_single().map(|window| window.cursor_position()) {
+        if let (Ok(mapped_pos), Ok((mut cursor_position, _))) = (
+            camera.viewport_to_world(camera_transform, m_position),
+            cursor_info.get_single_mut(),
+        ) {
+            cursor_position.translation = mapped_pos.origin.xy().extend(0.);
         }
     }
 }
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(Startup, spawn_cursor)
+    app.add_systems(Startup, init_cursor)
         .add_systems(Update, update_cursor_position);
 }
