@@ -1,3 +1,6 @@
+use bevy::prelude::*;
+use chess::app;
+
 fn main() {
-    println!("Hello, world!");
+    App::new().add_plugins(app::plugin).run();
 }
