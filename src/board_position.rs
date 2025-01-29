@@ -22,6 +22,10 @@ impl BoardPosition {
         self.1
     }
 
+    pub fn position(&self) -> (usize, usize) {
+        (self.x(), self.y())
+    }
+
     pub fn set_x(&mut self, x: usize) {
         self.0 = x;
     }
