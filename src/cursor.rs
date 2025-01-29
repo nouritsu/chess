@@ -9,7 +9,7 @@ pub enum CursorState {
 impl ToString for CursorState {
     fn to_string(&self) -> String {
         match self {
-            CursorState::Default => "default".to_string(),
+            CursorState::Default => "default".to_owned(),
         }
     }
 }
