@@ -3,9 +3,10 @@ use bevy::prelude::*;
 pub const IDX_WHITE: usize = 0;
 pub const IDX_BLACK: usize = 1;
 
-pub struct Colors(Vec<Handle<ColorMaterial>>);
+#[derive(Resource)]
+pub struct ColorHandler(Vec<Handle<ColorMaterial>>);
 
-impl Colors {
+impl ColorHandler {
     pub fn new() -> Self {
         Self(vec![])
     }

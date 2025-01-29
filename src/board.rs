@@ -1,7 +1,7 @@
 use crate::{
     app::{WINDOW_HEIGHT, WINDOW_WIDTH},
     board_position::BoardPosition,
-    colors::{Colors, IDX_BLACK, IDX_WHITE},
+    colors::{ColorHandler, IDX_BLACK, IDX_WHITE},
 };
 use bevy::prelude::*;
 use itertools::iproduct;
@@ -24,7 +24,7 @@ fn setup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut colors: ResMut<Assets<ColorMaterial>>,
 ) {
-    let mut colors_handler = Colors::new();
+    let mut colors_handler = ColorHandler::new();
 
     let black: Color = Srgba::hex(BOARD_BLACK).unwrap().into();
     let white: Color = Srgba::hex(BOARD_WHITE).unwrap().into();

@@ -7,7 +7,7 @@ pub const WINDOW_HEIGHT: f32 = 512.;
 #[derive(Component)]
 pub struct MainCamera;
 
-fn setup(mut cmd: Commands) {
+fn init_camera(mut cmd: Commands) {
     cmd.spawn((Camera2d::default(), MainCamera));
 }
 
@@ -33,5 +33,5 @@ pub fn plugin(app: &mut App) {
         cursor::plugin,
         board_position::plugin,
     ))
-    .add_systems(Startup, setup);
+    .add_systems(Startup, init_camera);
 }

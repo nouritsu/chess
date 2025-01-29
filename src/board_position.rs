@@ -59,12 +59,12 @@ impl From<BoardPosition> for Transform {
     }
 }
 
-fn update(mut query: Query<(&BoardPosition, &mut Transform), Changed<BoardPosition>>) {
+fn map_position(mut query: Query<(&BoardPosition, &mut Transform), Changed<BoardPosition>>) {
     for (pos, mut transform) in query.iter_mut() {
         *transform = pos.clone().into();
     }
 }
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(Update, update);
+    app.add_systems(Update, map_position);
 }

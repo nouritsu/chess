@@ -12,8 +12,8 @@ pub enum Piece {
     King,
 }
 
-fn setup(mut cmd: Commands) {}
+fn spawn_pieces(mut cmd: Commands) {}
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(Startup, setup);
+    app.add_systems(Startup, spawn_pieces);
 }

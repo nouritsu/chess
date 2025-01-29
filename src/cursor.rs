@@ -12,7 +12,7 @@ impl Default for CursorState {
     }
 }
 
-fn setup(mut cmd: Commands, asset_server: Res<AssetServer>) {
+fn spawn_cursor(mut cmd: Commands, asset_server: Res<AssetServer>) {
     let transform = Transform::from_xyz(0., 0., 0.);
 
     let state = CursorState::default();
@@ -25,7 +25,7 @@ fn setup(mut cmd: Commands, asset_server: Res<AssetServer>) {
     cmd.spawn((transform, sprite, state));
 }
 
-fn update(
+fn update_cursor_position(
     mut cursor_info: Query<(&mut Transform, &CursorState)>,
     windows: Query<&Window, With<PrimaryWindow>>,
     camera: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
@@ -42,5 +42,6 @@ fn update(
 }
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(Startup, setup).add_systems(Update, update);
+    app.add_systems(Startup, spawn_cursor)
+        .add_systems(Update, update_cursor_position);
 }
