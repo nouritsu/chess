@@ -4,10 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = "0.15.1"
+bevy = { version = "0.15.1" }
+enum-map = "2.7.3"
+itertools = "0.14.0"
+map-range = "0.1.2"
 
-[profile.dev]
-opt-level = 1
+# [profile.dev]
+# opt-level = 1
 
-[profile.dev.package."*"]
-opt-level = 3
+# [profile.dev.package."*"]
+# opt-level = 3
