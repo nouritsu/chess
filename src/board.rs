@@ -1,37 +1,46 @@
 use crate::{
     app::{WINDOW_HEIGHT, WINDOW_WIDTH},
     board_position::BoardPosition,
-    colors::{ColorHandler, IDX_BLACK, IDX_WHITE},
+    handler::{ColorHandler, GameColor, Handler},
+    render_layer::RenderLayer,
 };
 use bevy::prelude::*;
 use itertools::iproduct;
 
+pub const CELL_SIZE: f32 = 64.;
+
 pub const BOARD_SIZE: usize = {
     let board_size = 8.;
-    assert!(board_size % 1. == 0.);
-    assert!(WINDOW_WIDTH % (board_size * CELL_SIZE) == 0.);
-    assert!(WINDOW_HEIGHT % (board_size * CELL_SIZE) == 0.);
+
+    assert!(board_size % 1. == 0., "board size must be an integer");
+    assert!(
+        WINDOW_WIDTH % (board_size * CELL_SIZE) == 0.,
+        "window width must be divisible by board size"
+    );
+    assert!(
+        WINDOW_HEIGHT % (board_size * CELL_SIZE) == 0.,
+        "window height must be divisible by board size"
+    );
+
     board_size as usize
 };
 
-pub const CELL_SIZE: f32 = 64.;
+fn init_handler(mut cmd: Commands, mut colors: ResMut<Assets<ColorMaterial>>) {
+    let mut color_handler = ColorHandler::new();
+    let black: Color = Srgba::from(GameColor::Black).into();
+    let white: Color = Srgba::from(GameColor::White).into();
 
-const BOARD_WHITE: &'static str = "#E6EAD7";
-const BOARD_BLACK: &'static str = "#454D5F";
+    color_handler.add(GameColor::Black, colors.add(black));
+    color_handler.add(GameColor::White, colors.add(white));
 
-fn setup(
+    cmd.insert_resource(color_handler);
+}
+
+fn init_board(
     mut cmd: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut colors: ResMut<Assets<ColorMaterial>>,
+    color_handler: Res<ColorHandler>,
 ) {
-    let mut colors_handler = ColorHandler::new();
-
-    let black: Color = Srgba::hex(BOARD_BLACK).unwrap().into();
-    let white: Color = Srgba::hex(BOARD_WHITE).unwrap().into();
-
-    colors_handler.add(colors.add(black));
-    colors_handler.add(colors.add(white));
-
     for (i, j) in iproduct!(0..BOARD_SIZE, 0..BOARD_SIZE) {
         let mesh = {
             let rec = Rectangle::new(CELL_SIZE, CELL_SIZE);
@@ -41,19 +50,20 @@ fn setup(
         let board_position = BoardPosition::new(i, j);
 
         let material = {
-            let color = if (i + j) % 2 == 0 {
-                IDX_WHITE
-            } else {
-                IDX_BLACK
-            };
+            let color = color_handler
+                .get(GameColor::from((i, j)))
+                .cloned()
+                .expect("infallible");
 
-            MeshMaterial2d(colors_handler.get(color).clone())
+            MeshMaterial2d(color)
         };
 
-        cmd.spawn((mesh, material, board_position));
+        let layer = RenderLayer::Board;
+
+        cmd.spawn((mesh, material, board_position, layer));
     }
 }
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(Startup, setup);
+    app.add_systems(Startup, (init_handler, init_board).chain());
 }
