@@ -5,6 +5,7 @@ use crate::{
 };
 use bevy::prelude::*;
 use itertools::iproduct;
+use pleco::SQ;
 use strum::VariantArray;
 
 fn init_handler(mut cmd: Commands, asset_server: Res<AssetServer>) {
@@ -20,54 +21,56 @@ fn init_handler(mut cmd: Commands, asset_server: Res<AssetServer>) {
 }
 
 fn spawn_pieces(mut cmd: Commands, sprite_handler: Res<PieceSpriteHandler>) {
-    let mut spawn_piece =
-        |(i, j): (usize, usize), piece_color: GameColor, piece_type: GamePiece| {
-            let sprite = Sprite {
-                image: sprite_handler
-                    .get((piece_color, piece_type))
-                    .cloned()
-                    .expect("infallible"),
-                custom_size: Some(Vec2::splat(48.)),
-                ..Default::default()
-            };
-
-            let layer = RenderLayer::Pieces;
-
-            let board_pos = BoardPosition::new(i, j);
-
-            cmd.spawn((board_pos, sprite, layer));
+    let mut spawn_piece = |p: u8, piece_color: GameColor, piece_type: GamePiece| {
+        let sprite = Sprite {
+            image: sprite_handler
+                .get((piece_color, piece_type))
+                .cloned()
+                .expect("infallible"),
+            custom_size: Some(Vec2::splat(48.)),
+            ..Default::default()
         };
 
+        let layer = RenderLayer::Pieces;
+
+        let board_pos = BoardPosition::new(SQ::from(p));
+
+        cmd.spawn((board_pos, sprite, layer));
+    };
+
     // Kings
-    spawn_piece((4, 0), GameColor::White, GamePiece::King);
-    spawn_piece((4, 7), GameColor::Black, GamePiece::King);
+    spawn_piece(4, GameColor::White, GamePiece::King);
+    spawn_piece(60, GameColor::Black, GamePiece::King);
 
     // Queens
-    spawn_piece((3, 0), GameColor::White, GamePiece::Queen);
-    spawn_piece((3, 7), GameColor::Black, GamePiece::Queen);
+    spawn_piece(3, GameColor::White, GamePiece::Queen);
+    spawn_piece(59, GameColor::Black, GamePiece::Queen);
 
     // Rooks
-    spawn_piece((7, 0), GameColor::White, GamePiece::Rook);
-    spawn_piece((7, 7), GameColor::Black, GamePiece::Rook);
-    spawn_piece((0, 0), GameColor::White, GamePiece::Rook);
-    spawn_piece((0, 7), GameColor::Black, GamePiece::Rook);
+    spawn_piece(0, GameColor::White, GamePiece::Rook);
+    spawn_piece(7, GameColor::White, GamePiece::Rook);
+    spawn_piece(56, GameColor::Black, GamePiece::Rook);
+    spawn_piece(63, GameColor::Black, GamePiece::Rook);
 
     // Bishops
-    spawn_piece((2, 0), GameColor::White, GamePiece::Bishop);
-    spawn_piece((5, 0), GameColor::White, GamePiece::Bishop);
-    spawn_piece((2, 7), GameColor::Black, GamePiece::Bishop);
-    spawn_piece((5, 7), GameColor::Black, GamePiece::Bishop);
+    spawn_piece(2, GameColor::White, GamePiece::Bishop);
+    spawn_piece(5, GameColor::White, GamePiece::Bishop);
+    spawn_piece(58, GameColor::Black, GamePiece::Bishop);
+    spawn_piece(61, GameColor::Black, GamePiece::Bishop);
 
     // Knights
-    spawn_piece((1, 0), GameColor::White, GamePiece::Knight);
-    spawn_piece((6, 0), GameColor::White, GamePiece::Knight);
-    spawn_piece((1, 7), GameColor::Black, GamePiece::Knight);
-    spawn_piece((6, 7), GameColor::Black, GamePiece::Knight);
+    spawn_piece(1, GameColor::White, GamePiece::Knight);
+    spawn_piece(6, GameColor::White, GamePiece::Knight);
+    spawn_piece(57, GameColor::Black, GamePiece::Knight);
+    spawn_piece(62, GameColor::Black, GamePiece::Knight);
 
     // Pawns
-    for i in 0..8 {
-        spawn_piece((i, 1), GameColor::White, GamePiece::Pawn);
-        spawn_piece((i, 6), GameColor::Black, GamePiece::Pawn);
+    for i in 8..16 {
+        spawn_piece(i, GameColor::White, GamePiece::Pawn);
+    }
+
+    for i in 48..56 {
+        spawn_piece(i, GameColor::Black, GamePiece::Pawn);
     }
 }
 

@@ -21,7 +21,7 @@ impl Default for CursorState {
 }
 
 fn init_cursor(mut cmd: Commands, asset_server: Res<AssetServer>) {
-    let transform = Transform::from_xyz(0., 0., 0.);
+    let transform = Transform::from_xyz(0., 0., RenderLayer::Cursor.into());
 
     let state = CursorState::default();
 
@@ -49,7 +49,8 @@ fn update_cursor_position(
             camera.viewport_to_world(camera_transform, m_position),
             cursor_info.get_single_mut(),
         ) {
-            cursor_position.translation = mapped_pos.origin.xy().extend(0.);
+            let Vec2 { x, y } = mapped_pos.origin.xy();
+            *cursor_position = Transform::from_xyz(x, y, RenderLayer::Cursor.into());
         }
     }
 }

@@ -5,7 +5,7 @@ use crate::{
     render_layer::RenderLayer,
 };
 use bevy::prelude::*;
-use itertools::iproduct;
+use pleco::SQ;
 
 pub const CELL_SIZE: f32 = 64.;
 
@@ -41,17 +41,17 @@ fn init_board(
     mut meshes: ResMut<Assets<Mesh>>,
     color_handler: Res<ColorHandler>,
 ) {
-    for (i, j) in iproduct!(0..BOARD_SIZE, 0..BOARD_SIZE) {
+    for p in 0..(BOARD_SIZE * BOARD_SIZE) {
         let mesh = {
             let rec = Rectangle::new(CELL_SIZE, CELL_SIZE);
             Mesh2d(meshes.add(Mesh::from(rec)))
         };
 
-        let board_position = BoardPosition::new(i, j);
+        let board_position = BoardPosition::new(SQ::from(p as u8));
 
         let material = {
             let color = color_handler
-                .get(GameColor::from((i, j)))
+                .get(GameColor::from((p % 8, p / 8)))
                 .cloned()
                 .expect("infallible");
 

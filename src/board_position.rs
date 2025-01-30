@@ -4,68 +4,57 @@ use crate::{
 };
 use bevy::prelude::*;
 use map_range::MapRange;
+use pleco::SQ;
 
-#[derive(Component, Clone)]
+#[derive(Component, Clone, Copy)]
 #[require(Transform)]
-pub struct BoardPosition(usize, usize);
+pub struct BoardPosition(SQ);
 
-impl BoardPosition {
-    pub fn new(x: usize, y: usize) -> Self {
-        BoardPosition(x, y)
-    }
+impl From<BoardPosition> for Vec2 {
+    fn from(pos: BoardPosition) -> Self {
+        let p = u8::from(pos.0);
 
-    pub fn x(&self) -> usize {
-        self.0
-    }
+        let x_input_range = {
+            let start = 0.;
+            let end = (BOARD_SIZE - 1) as f32;
+            start..end
+        };
 
-    pub fn y(&self) -> usize {
-        self.1
-    }
+        let y_input_range = {
+            let start = 0.;
+            let end = (BOARD_SIZE - 1) as f32;
+            start..end
+        };
 
-    pub fn position(&self) -> (usize, usize) {
-        (self.x(), self.y())
-    }
+        let x_output_range = {
+            let start = (-WINDOW_WIDTH + CELL_SIZE) / 2.;
+            let end = (WINDOW_WIDTH - CELL_SIZE) / 2.;
+            start..end
+        };
 
-    pub fn set_x(&mut self, x: usize) {
-        self.0 = x;
-    }
+        let y_output_range = {
+            let start = (-WINDOW_HEIGHT + CELL_SIZE) / 2.;
+            let end = (WINDOW_HEIGHT - CELL_SIZE) / 2.;
+            start..end
+        };
 
-    pub fn set_y(&mut self, y: usize) {
-        self.1 = y;
-    }
+        let x = ((p % 8) as f32).map_range(x_input_range, x_output_range);
+        let y = ((p / 8) as f32).map_range(y_input_range, y_output_range);
 
-    pub fn move_to(&mut self, x: usize, y: usize) {
-        self.set_x(x);
-        self.set_y(y);
+        Vec2::new(x, y)
     }
 }
 
-impl From<BoardPosition> for Transform {
-    fn from(pos: BoardPosition) -> Self {
-        let x_input_start = 0.;
-        let y_input_start = 0.;
-
-        let x_input_end = (BOARD_SIZE - 1) as f32;
-        let y_input_end = (BOARD_SIZE - 1) as f32;
-
-        let x_output_start = (-WINDOW_WIDTH + CELL_SIZE) / 2.;
-        let y_output_start = (-WINDOW_HEIGHT + CELL_SIZE) / 2.;
-
-        let x_output_end = (WINDOW_WIDTH - CELL_SIZE) / 2.;
-        let y_output_end = (WINDOW_HEIGHT - CELL_SIZE) / 2.;
-
-        let x =
-            (pos.x() as f32).map_range(x_input_start..x_input_end, x_output_start..x_output_end);
-        let y =
-            (pos.y() as f32).map_range(y_input_start..y_input_end, y_output_start..y_output_end);
-
-        Transform::from_xyz(x, y, 0.)
+impl BoardPosition {
+    pub fn new(sq: SQ) -> Self {
+        Self(sq)
     }
 }
 
 fn map_position(mut query: Query<(&BoardPosition, &mut Transform), Changed<BoardPosition>>) {
     for (pos, mut transform) in query.iter_mut() {
-        *transform = pos.clone().into();
+        let (Vec2 { x, y }, z) = (Vec2::from(*pos), transform.translation.x);
+        *transform = Transform::from_xyz(x, y, z);
     }
 }
 
