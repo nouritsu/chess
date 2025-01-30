@@ -3240,7 +3240,7 @@ checksum = "953ec861398dccce10c670dfeaf3ec4911ca479e9c02154b3a215178c5f566f2"
 [[package]]
 name = "pleco"
 version = "0.5.0"
-source = "git+https://github.com/nouritsu/pleco-hash/?branch=main#36166d29f2682b6e8a1ed994e1112be404db5072"
+source = "git+https://github.com/nouritsu/pleco-hash/?rev=01c984d#01c984da61b34981d42b0c4d81c309c3ef39526c"
 dependencies = [
  "bitflags 1.3.2",
  "lazy_static",
@@ -3248,6 +3248,7 @@ dependencies = [
  "num_cpus",
  "rand",
  "rayon",
+ "strum",
 ]
 
 [[package]]

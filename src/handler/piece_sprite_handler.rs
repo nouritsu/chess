@@ -1,37 +1,13 @@
-use super::{GameColor, Handler};
+use super::Handler;
 use bevy::prelude::*;
+use pleco::Piece;
 use std::collections::HashMap;
-use strum::VariantArray;
 
 #[derive(Resource)]
-pub struct PieceSpriteHandler(HashMap<(GameColor, GamePiece), Handle<Image>>);
-
-#[derive(Component, Hash, Eq, PartialEq, Clone, Copy, VariantArray)]
-pub enum GamePiece {
-    Pawn,
-    Rook,
-    Knight,
-    Bishop,
-    Queen,
-    King,
-}
-
-impl ToString for GamePiece {
-    fn to_string(&self) -> String {
-        match self {
-            Self::Pawn => "pawn",
-            Self::Rook => "rook",
-            Self::Knight => "knight",
-            Self::Bishop => "bishop",
-            Self::Queen => "queen",
-            Self::King => "king",
-        }
-        .to_string()
-    }
-}
+pub struct PieceSpriteHandler(HashMap<Piece, Handle<Image>>);
 
 impl Handler for PieceSpriteHandler {
-    type K = (GameColor, GamePiece);
+    type K = Piece;
     type A = Image;
 
     fn get_inner(&self) -> &HashMap<Self::K, Handle<Self::A>> {

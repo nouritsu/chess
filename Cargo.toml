@@ -4,11 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+pleco = { git = "https://github.com/nouritsu/pleco-hash/", rev = "01c984d" }
 bevy = { version = "0.15.1" }
 enum-map = "2.7.3"
 itertools = "0.14.0"
 map-range = "0.1.2"
-pleco = { git = "https://github.com/nouritsu/pleco-hash/", branch = "main" }
 strum = { version = "0.26.3", features = ["derive"] }
 
 # [profile.dev]
