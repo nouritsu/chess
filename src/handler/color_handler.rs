@@ -13,19 +13,13 @@ pub enum GameColor {
     BoardBlack,
 }
 
-impl ToString for GameColor {
-    fn to_string(&self) -> String {
-        match self {
-            Self::BoardWhite => "white",
-            Self::BoardBlack => "black",
-        }
-        .to_string()
-    }
-}
-
 impl From<GameColor> for Srgba {
     fn from(color: GameColor) -> Self {
-        Self::hex(color.hex()).expect("unable to convert hex")
+        match color {
+            GameColor::BoardWhite => Self::hex("E6EAD7"),
+            GameColor::BoardBlack => Self::hex("454D5F"),
+        }
+        .expect("failed to build srgba from hex")
     }
 }
 
