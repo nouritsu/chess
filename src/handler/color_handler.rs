@@ -1,5 +1,6 @@
 use super::Handler;
 use bevy::prelude::*;
+use pleco::SQ;
 use std::collections::HashMap;
 use strum::VariantArray;
 
@@ -28,9 +29,12 @@ impl From<GameColor> for Srgba {
     }
 }
 
-impl From<(usize, usize)> for GameColor {
-    fn from((i, j): (usize, usize)) -> Self {
-        if (i + j) % 2 == 0 {
+impl From<SQ> for GameColor {
+    fn from(sq: SQ) -> Self {
+        let rank = sq.rank_idx_of_sq();
+        let file = sq.file_idx_of_sq();
+
+        if (rank + file) % 2 == 0 {
             Self::BoardBlack
         } else {
             Self::BoardWhite
