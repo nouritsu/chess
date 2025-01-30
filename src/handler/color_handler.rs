@@ -8,15 +8,15 @@ pub struct ColorHandler(HashMap<GameColor, Handle<ColorMaterial>>);
 
 #[derive(Component, Hash, Eq, PartialEq, Clone, Copy, VariantArray)]
 pub enum GameColor {
-    White,
-    Black,
+    BoardWhite,
+    BoardBlack,
 }
 
 impl ToString for GameColor {
     fn to_string(&self) -> String {
         match self {
-            Self::White => "white",
-            Self::Black => "black",
+            Self::BoardWhite => "white",
+            Self::BoardBlack => "black",
         }
         .to_string()
     }
@@ -31,9 +31,9 @@ impl From<GameColor> for Srgba {
 impl From<(usize, usize)> for GameColor {
     fn from((i, j): (usize, usize)) -> Self {
         if (i + j) % 2 == 0 {
-            Self::Black
+            Self::BoardBlack
         } else {
-            Self::White
+            Self::BoardWhite
         }
     }
 }
@@ -41,8 +41,8 @@ impl From<(usize, usize)> for GameColor {
 impl GameColor {
     pub fn hex(&self) -> &'static str {
         match self {
-            Self::White => "#E6EAD7",
-            Self::Black => "#454D5F",
+            Self::BoardWhite => "#E6EAD7",
+            Self::BoardBlack => "#454D5F",
         }
     }
 }

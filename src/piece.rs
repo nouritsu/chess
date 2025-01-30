@@ -39,38 +39,38 @@ fn spawn_pieces(mut cmd: Commands, sprite_handler: Res<PieceSpriteHandler>) {
     };
 
     // Kings
-    spawn_piece(4, GameColor::White, GamePiece::King);
-    spawn_piece(60, GameColor::Black, GamePiece::King);
+    spawn_piece(4, GameColor::BoardWhite, GamePiece::King);
+    spawn_piece(60, GameColor::BoardBlack, GamePiece::King);
 
     // Queens
-    spawn_piece(3, GameColor::White, GamePiece::Queen);
-    spawn_piece(59, GameColor::Black, GamePiece::Queen);
+    spawn_piece(3, GameColor::BoardWhite, GamePiece::Queen);
+    spawn_piece(59, GameColor::BoardBlack, GamePiece::Queen);
 
     // Rooks
-    spawn_piece(0, GameColor::White, GamePiece::Rook);
-    spawn_piece(7, GameColor::White, GamePiece::Rook);
-    spawn_piece(56, GameColor::Black, GamePiece::Rook);
-    spawn_piece(63, GameColor::Black, GamePiece::Rook);
+    spawn_piece(0, GameColor::BoardWhite, GamePiece::Rook);
+    spawn_piece(7, GameColor::BoardWhite, GamePiece::Rook);
+    spawn_piece(56, GameColor::BoardBlack, GamePiece::Rook);
+    spawn_piece(63, GameColor::BoardBlack, GamePiece::Rook);
 
     // Bishops
-    spawn_piece(2, GameColor::White, GamePiece::Bishop);
-    spawn_piece(5, GameColor::White, GamePiece::Bishop);
-    spawn_piece(58, GameColor::Black, GamePiece::Bishop);
-    spawn_piece(61, GameColor::Black, GamePiece::Bishop);
+    spawn_piece(2, GameColor::BoardWhite, GamePiece::Bishop);
+    spawn_piece(5, GameColor::BoardWhite, GamePiece::Bishop);
+    spawn_piece(58, GameColor::BoardBlack, GamePiece::Bishop);
+    spawn_piece(61, GameColor::BoardBlack, GamePiece::Bishop);
 
     // Knights
-    spawn_piece(1, GameColor::White, GamePiece::Knight);
-    spawn_piece(6, GameColor::White, GamePiece::Knight);
-    spawn_piece(57, GameColor::Black, GamePiece::Knight);
-    spawn_piece(62, GameColor::Black, GamePiece::Knight);
+    spawn_piece(1, GameColor::BoardWhite, GamePiece::Knight);
+    spawn_piece(6, GameColor::BoardWhite, GamePiece::Knight);
+    spawn_piece(57, GameColor::BoardBlack, GamePiece::Knight);
+    spawn_piece(62, GameColor::BoardBlack, GamePiece::Knight);
 
     // Pawns
     for i in 8..16 {
-        spawn_piece(i, GameColor::White, GamePiece::Pawn);
+        spawn_piece(i, GameColor::BoardWhite, GamePiece::Pawn);
     }
 
     for i in 48..56 {
-        spawn_piece(i, GameColor::Black, GamePiece::Pawn);
+        spawn_piece(i, GameColor::BoardBlack, GamePiece::Pawn);
     }
 }
 

@@ -27,11 +27,11 @@ pub const BOARD_SIZE: usize = {
 
 fn init_handler(mut cmd: Commands, mut colors: ResMut<Assets<ColorMaterial>>) {
     let mut color_handler = ColorHandler::new();
-    let black: Color = Srgba::from(GameColor::Black).into();
-    let white: Color = Srgba::from(GameColor::White).into();
+    let black: Color = Srgba::from(GameColor::BoardBlack).into();
+    let white: Color = Srgba::from(GameColor::BoardWhite).into();
 
-    color_handler.add(GameColor::Black, colors.add(black));
-    color_handler.add(GameColor::White, colors.add(white));
+    color_handler.add(GameColor::BoardBlack, colors.add(black));
+    color_handler.add(GameColor::BoardWhite, colors.add(white));
 
     cmd.insert_resource(color_handler);
 }
