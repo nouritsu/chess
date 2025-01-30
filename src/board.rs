@@ -1,29 +1,31 @@
 use crate::{
-    app::{WINDOW_HEIGHT, WINDOW_WIDTH},
     board_position::BoardPosition,
     handler::{ColorHandler, GameColor, Handler},
     render_layer::RenderLayer,
 };
 use bevy::prelude::*;
-use pleco::SQ;
+use pleco::{Board, SQ};
+use std::ops::{Deref, DerefMut};
 
 pub const CELL_SIZE: f32 = 64.;
+pub const BOARD_SIZE: u8 = 8;
 
-pub const BOARD_SIZE: usize = {
-    let board_size = 8.;
+#[derive(Resource)]
+pub struct ChessBoard(Board);
 
-    assert!(board_size % 1. == 0., "board size must be an integer");
-    assert!(
-        WINDOW_WIDTH % (board_size * CELL_SIZE) == 0.,
-        "window width must be divisible by board size"
-    );
-    assert!(
-        WINDOW_HEIGHT % (board_size * CELL_SIZE) == 0.,
-        "window height must be divisible by board size"
-    );
+impl Deref for ChessBoard {
+    type Target = Board;
 
-    board_size as usize
-};
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for ChessBoard {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
 
 fn init_handler(mut cmd: Commands, mut colors: ResMut<Assets<ColorMaterial>>) {
     let mut color_handler = ColorHandler::new();
@@ -41,19 +43,19 @@ fn init_board(
     mut meshes: ResMut<Assets<Mesh>>,
     color_handler: Res<ColorHandler>,
 ) {
-    for p in 0..(BOARD_SIZE * BOARD_SIZE) {
+    for p in (0..(BOARD_SIZE * BOARD_SIZE)).map(|x| SQ::from(x)) {
         let mesh = {
             let rec = Rectangle::new(CELL_SIZE, CELL_SIZE);
             Mesh2d(meshes.add(Mesh::from(rec)))
         };
 
-        let board_position = BoardPosition::new(SQ::from(p as u8));
+        let board_position = BoardPosition::new(p);
 
         let material = {
             let color = color_handler
-                .get(GameColor::from((p % 8, p / 8)))
+                .get(GameColor::from(p))
                 .cloned()
-                .expect("infallible");
+                .expect("failed to get color");
 
             MeshMaterial2d(color)
         };
@@ -65,5 +67,7 @@ fn init_board(
 }
 
 pub fn plugin(app: &mut App) {
+    let board = ChessBoard(Board::default());
+    app.insert_resource(board);
     app.add_systems(Startup, (init_handler, init_board).chain());
 }

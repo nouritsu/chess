@@ -1,4 +1,5 @@
 use crate::{
+    board::{ChessBoard, BOARD_SIZE},
     board_position::BoardPosition,
     handler::{Handler, PieceSpriteHandler},
     render_layer::RenderLayer,
@@ -6,6 +7,8 @@ use crate::{
 use bevy::prelude::*;
 use pleco::{Piece, SQ};
 use strum::VariantArray;
+
+pub const PIECE_SIZE: f32 = 48.;
 
 fn init_handler(mut cmd: Commands, asset_server: Res<AssetServer>) {
     let mut sprite_handler = PieceSpriteHandler::new();
@@ -34,11 +37,15 @@ fn init_handler(mut cmd: Commands, asset_server: Res<AssetServer>) {
     cmd.insert_resource(sprite_handler);
 }
 
-fn spawn_pieces(mut cmd: Commands, sprite_handler: Res<PieceSpriteHandler>) {
+fn spawn_pieces(
+    mut cmd: Commands,
+    sprite_handler: Res<PieceSpriteHandler>,
+    board: Res<ChessBoard>,
+) {
     let mut spawn_piece = |p: u8, piece_type: Piece| {
         let sprite = Sprite {
             image: sprite_handler.get(piece_type).cloned().expect("infallible"),
-            custom_size: Some(Vec2::splat(48.)),
+            custom_size: Some(Vec2::splat(PIECE_SIZE)),
             ..Default::default()
         };
 
@@ -49,39 +56,12 @@ fn spawn_pieces(mut cmd: Commands, sprite_handler: Res<PieceSpriteHandler>) {
         cmd.spawn((board_pos, sprite, layer));
     };
 
-    // Kings
-    spawn_piece(4, Piece::WhiteKing);
-    spawn_piece(60, Piece::BlackKing);
-
-    // Queens
-    spawn_piece(3, Piece::WhiteQueen);
-    spawn_piece(59, Piece::BlackQueen);
-
-    // Rooks
-    spawn_piece(0, Piece::WhiteRook);
-    spawn_piece(7, Piece::WhiteRook);
-    spawn_piece(56, Piece::BlackRook);
-    spawn_piece(63, Piece::BlackRook);
-
-    // Bishops
-    spawn_piece(2, Piece::WhiteBishop);
-    spawn_piece(5, Piece::WhiteBishop);
-    spawn_piece(58, Piece::BlackBishop);
-    spawn_piece(61, Piece::BlackBishop);
-
-    // Knights
-    spawn_piece(1, Piece::WhiteKnight);
-    spawn_piece(6, Piece::WhiteKnight);
-    spawn_piece(57, Piece::BlackKnight);
-    spawn_piece(62, Piece::BlackKnight);
-
-    // Pawns
-    for i in 8..16 {
-        spawn_piece(i, Piece::WhitePawn);
-    }
-
-    for i in 48..56 {
-        spawn_piece(i, Piece::BlackPawn);
+    for i in 0..(BOARD_SIZE * BOARD_SIZE) {
+        let pieces = board.get_piece_locations();
+        match pieces.piece_at(SQ::from(i)) {
+            Piece::None => continue,
+            piece => spawn_piece(i, piece),
+        }
     }
 }
 
