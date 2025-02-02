@@ -4,11 +4,11 @@ use pleco::SQ;
 
 use super::HighlightState;
 
-#[derive(Resource, Debug)]
+#[derive(Resource, Debug, Default)]
 pub struct Selector {
-    start: Option<SQ>,
-    end: Option<SQ>,
-    state: SelectorState,
+    pub start: Option<SQ>,
+    pub end: Option<SQ>,
+    pub state: SelectorState,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -18,49 +18,17 @@ pub enum SelectorState {
     ToSelected,
 }
 
-#[derive(Event)]
-pub struct SelectorFromSelected;
-
-impl Selector {
-    pub fn new() -> Self {
-        Selector {
-            start: None,
-            end: None,
-            state: SelectorState::Idle,
-        }
-    }
-
-    pub fn start(&mut self, position: SQ) {
-        self.start = Some(position);
-        self.state = SelectorState::FromSelected;
-    }
-
-    pub fn get_from(&self) -> Option<SQ> {
-        self.start
-    }
-
-    pub fn end(&mut self, position: SQ) {
-        self.end = Some(position);
-        self.state = SelectorState::ToSelected;
-    }
-
-    pub fn get_to(&self) -> Option<SQ> {
-        self.end
-    }
-
-    pub fn reset(&mut self) {
-        self.start = None;
-        self.end = None;
-        self.state = SelectorState::Idle;
-    }
-
-    pub fn state(&self) -> SelectorState {
-        self.state
+impl Default for SelectorState {
+    fn default() -> Self {
+        Self::Idle
     }
 }
 
+#[derive(Event)]
+pub struct SelectorFromSelected;
+
 fn init_selector(mut cmd: Commands) {
-    let selector = Selector::new();
+    let selector = Selector::default();
     cmd.insert_resource(selector);
 }
 
@@ -70,28 +38,32 @@ fn selector(
     board: Res<ChessBoard>,
     buttons: Res<ButtonInput<MouseButton>>,
 ) {
-    let Vec2 { x, y } = cursor_position.get();
-    let bp = BoardPosition::from_window_xy(x, y).to_sq();
+    let CursorPosition(Vec2 { x, y }) = *cursor_position;
+    let BoardPosition(bp) = BoardPosition::from_window_xy(x, y);
     let pieces = board.get_piece_locations();
 
-    match selector.state() {
+    match selector.state {
         SelectorState::Idle if buttons.just_released(MouseButton::Left) && pieces.at_square(bp) => {
-            selector.start(bp);
+            selector.start = Some(bp);
+            selector.state = SelectorState::FromSelected;
         }
 
         SelectorState::FromSelected if buttons.just_released(MouseButton::Left) => {
-            selector.end(bp);
+            selector.end = Some(bp);
+            selector.state = SelectorState::ToSelected;
         }
 
         SelectorState::ToSelected => {
-            selector.reset();
+            selector.start = None;
+            selector.end = None;
+            selector.state = SelectorState::Idle;
         }
         _ => {}
     }
 }
 
 fn highlight_state_handler(selector: Res<Selector>, mut hs: ResMut<HighlightState>) {
-    if matches!(selector.state(), SelectorState::FromSelected)
+    if matches!(selector.state, SelectorState::FromSelected)
         && !matches!(hs.as_ref(), HighlightState::Spawned)
     {
         *hs = HighlightState::FromSelected;

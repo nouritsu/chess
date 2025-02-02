@@ -2,7 +2,7 @@ use super::{MainCamera, RenderLayer};
 use bevy::{prelude::*, window::PrimaryWindow};
 
 #[derive(Resource, Default)]
-pub struct CursorPosition(Vec2);
+pub struct CursorPosition(pub Vec2);
 
 #[derive(Component, Debug)]
 pub enum CursorState {
@@ -20,20 +20,6 @@ impl ToString for CursorState {
 impl Default for CursorState {
     fn default() -> Self {
         CursorState::Default
-    }
-}
-
-impl CursorPosition {
-    pub fn new(position: Vec2) -> Self {
-        Self(position)
-    }
-
-    pub fn get(&self) -> Vec2 {
-        self.0
-    }
-
-    pub fn set(&mut self, position: Vec2) {
-        self.0 = position;
     }
 }
 
@@ -68,7 +54,7 @@ fn update_cursor_position(
         .and_then(|ray| Some(ray.origin.truncate()));
 
     if let Some(position) = mapped_position {
-        cursor_position.set(position);
+        *cursor_position = CursorPosition(position);
     }
 }
 
@@ -77,7 +63,7 @@ fn update_sprite_position(
     mut cursor: Query<&mut Transform, With<CursorState>>,
 ) {
     if let Ok(mut transform) = cursor.get_single_mut() {
-        transform.translation = cursor_position.get().extend(RenderLayer::Cursor.into());
+        transform.translation = cursor_position.0.extend(RenderLayer::Cursor.into());
     }
 }
 

@@ -1,10 +1,6 @@
 use crate::board::{ChessBoard, BOARD_SIZE};
 use pleco::{Piece, SQ};
 
-pub fn get_valid_moves(board: &ChessBoard, sq: SQ, piece: Piece) -> Vec<SQ> {
-    todo!()
-}
-
 pub fn get_moves(board: &ChessBoard, sq: SQ, piece: Piece) -> Vec<SQ> {
     match piece {
         Piece::WhitePawn | Piece::BlackPawn => {

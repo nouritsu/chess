@@ -9,7 +9,7 @@ use std::ops::Range;
 
 #[derive(Component, Clone, Copy, Debug)]
 #[require(Transform)]
-pub struct BoardPosition(SQ);
+pub struct BoardPosition(pub SQ);
 
 impl BoardPosition {
     const BOARD_RANGE: Range<f32> = (0.)..((BOARD_SIZE - 1) as f32);
@@ -25,10 +25,6 @@ impl BoardPosition {
         let end = (WINDOW_HEIGHT - CELL_SIZE) / 2.;
         start..end
     };
-
-    pub fn new(sq: SQ) -> Self {
-        Self(sq)
-    }
 
     pub fn to_board_xy(&self) -> (u8, u8) {
         let p = u8::from(self.0);
@@ -47,10 +43,6 @@ impl BoardPosition {
     pub fn from_window_xy(x: f32, y: f32) -> Self {
         let (x, y) = Self::window_to_board(x, y);
         Self::from_board_xy(x, y)
-    }
-
-    pub fn to_sq(&self) -> SQ {
-        self.0
     }
 
     fn board_to_window(x: u8, y: u8) -> (f32, f32) {

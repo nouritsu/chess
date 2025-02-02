@@ -22,7 +22,7 @@ fn spawn_pieces(
 
         let layer = RenderLayer::Pieces;
 
-        let board_pos = BoardPosition::new(SQ::from(p));
+        let board_pos = BoardPosition(SQ::from(p));
 
         cmd.spawn((board_pos, sprite, layer));
     };

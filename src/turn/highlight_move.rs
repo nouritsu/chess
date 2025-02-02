@@ -28,13 +28,11 @@ fn highlight_squares(
     mut meshes: ResMut<Assets<Mesh>>,
     mut hs: ResMut<HighlightState>,
 ) {
-    println!("{:?}", hs);
-
     if matches!(hs.as_ref(), HighlightState::Spawned) {
         return;
     }
 
-    let Some(sq) = selector.get_from() else {
+    let Some(sq) = selector.start else {
         return;
     };
 
@@ -48,7 +46,7 @@ fn highlight_squares(
             Mesh2d(meshes.add(Mesh::from(rec)))
         };
 
-        let board_position = BoardPosition::new(square);
+        let board_position = BoardPosition(square);
 
         let material = {
             let color = color_handler.get(GameColor::HighlightGreen);
@@ -71,7 +69,7 @@ fn remove_highlight(
     selector: Res<Selector>,
     mut hs: ResMut<HighlightState>,
 ) {
-    if matches!(selector.state(), SelectorState::FromSelected)
+    if matches!(selector.state, SelectorState::FromSelected)
         || matches!(*hs, HighlightState::FromSelected | HighlightState::Idle)
     {
         return;

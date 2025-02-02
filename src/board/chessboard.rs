@@ -38,7 +38,7 @@ fn init_board(
             Mesh2d(meshes.add(Mesh::from(rec)))
         };
 
-        let board_position = BoardPosition::new(p);
+        let board_position = BoardPosition(p);
 
         let material = {
             let color = color_handler.get(GameColor::from(p));
