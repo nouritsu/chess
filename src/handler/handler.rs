@@ -10,12 +10,13 @@ pub trait Handler {
     fn get_inner_mut(&mut self) -> &mut HashMap<Self::K, Handle<Self::A>>;
 
     fn add(&mut self, key: Self::K, asset: Handle<Self::A>) {
-        let inner = self.get_inner_mut();
-        inner.insert(key, asset);
+        self.get_inner_mut().insert(key, asset);
     }
 
-    fn get(&self, key: Self::K) -> Option<&Handle<Self::A>> {
-        let inner = self.get_inner();
-        inner.get(&key)
+    fn get(&self, key: Self::K) -> Handle<Self::A> {
+        self.get_inner()
+            .get(&key)
+            .cloned()
+            .expect("failed to get handle, K SHOULD be an enum and must be initialized")
     }
 }

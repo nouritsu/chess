@@ -1,15 +1,7 @@
-use crate::{board, board_position, cursor, piece};
 use bevy::{prelude::*, window::CursorOptions};
 
 pub const WINDOW_WIDTH: f32 = 512.;
 pub const WINDOW_HEIGHT: f32 = 512.;
-
-#[derive(Component)]
-pub struct MainCamera;
-
-fn init_camera(mut cmd: Commands) {
-    cmd.spawn((Camera2d::default(), MainCamera, Msaa::Off));
-}
 
 pub fn plugin(app: &mut App) {
     let window = Window {
@@ -29,12 +21,5 @@ pub fn plugin(app: &mut App) {
         })
         .set(ImagePlugin::default_nearest());
 
-    app.add_plugins((
-        default_plugins,
-        board::plugin,
-        cursor::plugin,
-        board_position::plugin,
-        piece::plugin,
-    ))
-    .add_systems(Startup, init_camera);
+    app.add_plugins(default_plugins);
 }

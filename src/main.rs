@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use chess::app;
+use chess::app::AppPlugin;
 
 fn main() {
-    App::new().add_plugins(app::plugin).run();
+    App::new().add_plugins(AppPlugin).run();
 }

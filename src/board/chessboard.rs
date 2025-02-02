@@ -1,7 +1,7 @@
+use super::BoardPosition;
 use crate::{
-    board_position::BoardPosition,
+    app::RenderLayer,
     handler::{ColorHandler, GameColor, Handler},
-    render_layer::RenderLayer,
 };
 use bevy::prelude::*;
 use pleco::{Board, SQ};
@@ -27,17 +27,6 @@ impl DerefMut for ChessBoard {
     }
 }
 
-fn init_handler(mut cmd: Commands, mut colors: ResMut<Assets<ColorMaterial>>) {
-    let mut color_handler = ColorHandler::new();
-    let black: Color = Srgba::from(GameColor::BoardBlack).into();
-    let white: Color = Srgba::from(GameColor::BoardWhite).into();
-
-    color_handler.add(GameColor::BoardBlack, colors.add(black));
-    color_handler.add(GameColor::BoardWhite, colors.add(white));
-
-    cmd.insert_resource(color_handler);
-}
-
 fn init_board(
     mut cmd: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -52,11 +41,7 @@ fn init_board(
         let board_position = BoardPosition::new(p);
 
         let material = {
-            let color = color_handler
-                .get(GameColor::from(p))
-                .cloned()
-                .expect("failed to get color");
-
+            let color = color_handler.get(GameColor::from(p));
             MeshMaterial2d(color)
         };
 
@@ -69,5 +54,5 @@ fn init_board(
 pub fn plugin(app: &mut App) {
     let board = ChessBoard(Board::default());
     app.insert_resource(board);
-    app.add_systems(Startup, (init_handler, init_board).chain());
+    app.add_systems(Startup, init_board);
 }

@@ -11,8 +11,8 @@ itertools = "0.14.0"
 map-range = "0.1.2"
 strum = { version = "0.26.3", features = ["derive"] }
 
-# [profile.dev]
-# opt-level = 1
+[profile.dev]
+opt-level = 1
 
-# [profile.dev.package."*"]
-# opt-level = 3
+[profile.dev.package."*"]
+opt-level = 3

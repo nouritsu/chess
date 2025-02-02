@@ -11,15 +11,12 @@ pub struct ColorHandler(HashMap<GameColor, Handle<ColorMaterial>>);
 pub enum GameColor {
     BoardWhite,
     BoardBlack,
+    HighlightGreen,
 }
 
 impl From<GameColor> for Srgba {
     fn from(color: GameColor) -> Self {
-        match color {
-            GameColor::BoardWhite => Self::hex("E6EAD7"),
-            GameColor::BoardBlack => Self::hex("454D5F"),
-        }
-        .expect("failed to build srgba from hex")
+        Self::hex(color.hex()).expect("failed to build srgba from hex")
     }
 }
 
@@ -41,6 +38,7 @@ impl GameColor {
         match self {
             Self::BoardWhite => "#E6EAD7",
             Self::BoardBlack => "#454D5F",
+            Self::HighlightGreen => "#00FF00",
         }
     }
 }
@@ -62,4 +60,21 @@ impl ColorHandler {
     pub fn new() -> Self {
         Self(HashMap::new())
     }
+}
+
+fn init_color_handler(mut cmd: Commands, mut colors: ResMut<Assets<ColorMaterial>>) {
+    let mut color_handler = ColorHandler::new();
+    let black: Color = Srgba::from(GameColor::BoardBlack).into();
+    let white: Color = Srgba::from(GameColor::BoardWhite).into();
+    let green: Color = Srgba::from(GameColor::HighlightGreen).into();
+
+    color_handler.add(GameColor::BoardBlack, colors.add(black));
+    color_handler.add(GameColor::BoardWhite, colors.add(white));
+    color_handler.add(GameColor::HighlightGreen, colors.add(green));
+
+    cmd.insert_resource(color_handler);
+}
+
+pub fn plugin(app: &mut App) {
+    app.add_systems(PreStartup, init_color_handler);
 }
