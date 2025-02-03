@@ -23,8 +23,8 @@ impl PluginGroup for AppPlugin {
             .add(camera::plugin)
             .add(cursor::plugin)
             .add(render_layer::plugin)
-            .add_group(board::BoardPlugin)
             .add_group(handler::HandlerPlugin)
+            .add_group(board::BoardPlugin)
             .add_group(turn::TurnPlugin)
     }
 }

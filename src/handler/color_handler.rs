@@ -68,5 +68,5 @@ fn init_color_handler(mut cmd: Commands, mut colors: ResMut<Assets<ColorMaterial
 }
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(Startup, init_color_handler);
+    app.add_systems(PreStartup, init_color_handler);
 }

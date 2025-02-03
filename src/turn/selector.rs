@@ -2,8 +2,6 @@ use crate::{app::CursorPosition, board::BoardPosition, board::ChessBoard};
 use bevy::prelude::*;
 use pleco::SQ;
 
-use super::HighlightState;
-
 #[derive(Resource, Debug, Default)]
 pub struct Selector {
     pub start: Option<SQ>,
@@ -57,16 +55,8 @@ fn selector(
     }
 }
 
-fn highlight_state_handler(selector: Res<Selector>, mut hs: ResMut<HighlightState>) {
-    if matches!(selector.state, SelectorState::FromSelected)
-        && !matches!(hs.as_ref(), HighlightState::Spawned)
-    {
-        *hs = HighlightState::FromSelected;
-    }
-}
-
 pub fn plugin(app: &mut App) {
     app.add_systems(Startup, init_selector)
-        .add_systems(Update, (selector, highlight_state_handler).chain())
+        .add_systems(Update, selector.run_if(resource_exists::<ChessBoard>))
         .add_event::<SelectorFromSelected>();
 }

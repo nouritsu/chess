@@ -6,20 +6,11 @@ use crate::{
 };
 use bevy::prelude::*;
 
+#[derive(Resource)]
+struct Highlighted;
+
 #[derive(Component)]
 struct HighlightMarker;
-
-#[derive(Resource, Debug, PartialEq, Eq, Default)]
-pub enum HighlightState {
-    #[default]
-    Idle,
-    FromSelected,
-    Spawned,
-}
-
-fn init_highlight_state(mut cmd: Commands) {
-    cmd.insert_resource(HighlightState::Idle);
-}
 
 fn highlight_squares(
     mut cmd: Commands,
@@ -27,9 +18,9 @@ fn highlight_squares(
     board: Res<ChessBoard>,
     color_handler: Res<ColorHandler>,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut hs: ResMut<HighlightState>,
+    hs: Option<Res<Highlighted>>,
 ) {
-    if matches!(hs.as_ref(), HighlightState::Spawned) {
+    if hs.is_some() {
         return;
     }
 
@@ -61,18 +52,16 @@ fn highlight_squares(
         cmd.spawn((mesh, material, board_position, layer, marker));
     }
 
-    *hs = HighlightState::Spawned;
+    cmd.insert_resource(Highlighted);
 }
 
 fn remove_highlight(
     mut cmd: Commands,
     highlighted_squares: Query<Entity, With<HighlightMarker>>,
     selector: Res<Selector>,
-    mut hs: ResMut<HighlightState>,
+    hs: Option<Res<Highlighted>>,
 ) {
-    if matches!(selector.state, SelectorState::FromSelected)
-        || matches!(*hs, HighlightState::FromSelected | HighlightState::Idle)
-    {
+    if hs.is_none() || selector.state == SelectorState::FromSelected {
         return;
     }
 
@@ -80,10 +69,9 @@ fn remove_highlight(
         cmd.entity(entity).despawn();
     }
 
-    *hs = HighlightState::Idle;
+    cmd.remove_resource::<Highlighted>();
 }
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(Startup, init_highlight_state)
-        .add_systems(Update, (remove_highlight, highlight_squares).chain());
+    app.add_systems(Update, (remove_highlight, highlight_squares).chain());
 }

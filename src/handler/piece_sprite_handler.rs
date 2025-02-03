@@ -52,5 +52,5 @@ fn init_sprite_handler(mut cmd: Commands, asset_server: Res<AssetServer>) {
 }
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(Startup, init_sprite_handler);
+    app.add_systems(PreStartup, init_sprite_handler);
 }

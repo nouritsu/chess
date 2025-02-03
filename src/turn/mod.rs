@@ -5,7 +5,6 @@ mod highlight_move;
 mod selector;
 
 // Exports
-pub use highlight_move::HighlightState;
 pub use selector::{Selector, SelectorFromSelected};
 
 // Imports

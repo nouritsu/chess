@@ -37,5 +37,5 @@ fn spawn_pieces(
 }
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(Startup, spawn_pieces);
+    app.add_systems(PostStartup, spawn_pieces);
 }
