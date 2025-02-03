@@ -5,7 +5,7 @@ mod highlight_move;
 mod selector;
 
 // Exports
-pub use selector::{Selector, SelectorFromSelected};
+pub use selector::Selector;
 
 // Imports
 use bevy::{app::PluginGroupBuilder, prelude::*};

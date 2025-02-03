@@ -17,9 +17,6 @@ pub enum SelectorState {
     ToSelected,
 }
 
-#[derive(Event)]
-pub struct SelectorFromSelected;
-
 fn init_selector(mut cmd: Commands) {
     let selector = Selector::default();
     cmd.insert_resource(selector);
@@ -57,6 +54,5 @@ fn selector(
 
 pub fn plugin(app: &mut App) {
     app.add_systems(Startup, init_selector)
-        .add_systems(Update, selector.run_if(resource_exists::<ChessBoard>))
-        .add_event::<SelectorFromSelected>();
+        .add_systems(Update, selector.run_if(resource_exists::<ChessBoard>));
 }
