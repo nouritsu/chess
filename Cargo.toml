@@ -10,6 +10,7 @@ enum-map = "2.7.3"
 itertools = "0.14.0"
 map-range = "0.1.2"
 strum = { version = "0.26.3", features = ["derive"] }
+derive_more = { version = "1.0.0", features = ["deref", "deref_mut"] }
 
 [profile.dev]
 opt-level = 1

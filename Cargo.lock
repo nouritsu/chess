@@ -1446,6 +1446,7 @@ name = "chess"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "derive_more",
  "enum-map",
  "itertools 0.14.0",
  "map-range",

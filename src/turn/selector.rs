@@ -11,17 +11,12 @@ pub struct Selector {
     pub state: SelectorState,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum SelectorState {
+    #[default]
     Idle,
     FromSelected,
     ToSelected,
-}
-
-impl Default for SelectorState {
-    fn default() -> Self {
-        Self::Idle
-    }
 }
 
 #[derive(Event)]
@@ -71,7 +66,7 @@ fn highlight_state_handler(selector: Res<Selector>, mut hs: ResMut<HighlightStat
 }
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(PreStartup, init_selector)
+    app.add_systems(Startup, init_selector)
         .add_systems(Update, (selector, highlight_state_handler).chain())
         .add_event::<SelectorFromSelected>();
 }

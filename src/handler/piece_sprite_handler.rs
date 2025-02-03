@@ -1,10 +1,10 @@
-use super::Handler;
+use super::{AsAssetPath, Handler};
 use bevy::prelude::*;
 use pleco::Piece;
-use std::collections::HashMap;
+use std::{collections::HashMap, path::Path};
 use strum::VariantArray;
 
-#[derive(Resource)]
+#[derive(Resource, Default)]
 pub struct PieceSpriteHandler(HashMap<Piece, Handle<Image>>);
 
 impl Handler for PieceSpriteHandler {
@@ -20,33 +20,31 @@ impl Handler for PieceSpriteHandler {
     }
 }
 
-impl PieceSpriteHandler {
-    pub fn new() -> Self {
-        Self(HashMap::new())
+impl AsAssetPath for Piece {
+    fn as_asset_path(&self) -> &'static Path {
+        match self {
+            Piece::WhitePawn => Path::new("pieces/white/pawn.png"),
+            Piece::WhiteKnight => Path::new("pieces/white/knight.png"),
+            Piece::WhiteBishop => Path::new("pieces/white/bishop.png"),
+            Piece::WhiteRook => Path::new("pieces/white/rook.png"),
+            Piece::WhiteQueen => Path::new("pieces/white/queen.png"),
+            Piece::WhiteKing => Path::new("pieces/white/king.png"),
+            Piece::BlackPawn => Path::new("pieces/black/pawn.png"),
+            Piece::BlackKnight => Path::new("pieces/black/knight.png"),
+            Piece::BlackBishop => Path::new("pieces/black/bishop.png"),
+            Piece::BlackRook => Path::new("pieces/black/rook.png"),
+            Piece::BlackQueen => Path::new("pieces/black/queen.png"),
+            Piece::BlackKing => Path::new("pieces/black/king.png"),
+            Piece::None => unimplemented!(),
+        }
     }
 }
 
 fn init_sprite_handler(mut cmd: Commands, asset_server: Res<AssetServer>) {
-    let mut sprite_handler = PieceSpriteHandler::new();
+    let mut sprite_handler = PieceSpriteHandler::default();
 
     for piece in Piece::VARIANTS.iter().filter(|&&p| p != Piece::None) {
-        let path = match piece {
-            Piece::WhitePawn => "white/pawn.png",
-            Piece::WhiteKnight => "white/knight.png",
-            Piece::WhiteBishop => "white/bishop.png",
-            Piece::WhiteRook => "white/rook.png",
-            Piece::WhiteQueen => "white/queen.png",
-            Piece::WhiteKing => "white/king.png",
-            Piece::BlackPawn => "black/pawn.png",
-            Piece::BlackKnight => "black/knight.png",
-            Piece::BlackBishop => "black/bishop.png",
-            Piece::BlackRook => "black/rook.png",
-            Piece::BlackQueen => "black/queen.png",
-            Piece::BlackKing => "black/king.png",
-            Piece::None => unreachable!("encountered Piece::None"),
-        };
-
-        let asset = asset_server.load(format!("pieces/{}", path));
+        let asset = asset_server.load(piece.as_asset_path());
         sprite_handler.add(*piece, asset);
     }
 
@@ -54,5 +52,5 @@ fn init_sprite_handler(mut cmd: Commands, asset_server: Res<AssetServer>) {
 }
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(PreStartup, init_sprite_handler);
+    app.add_systems(Startup, init_sprite_handler);
 }

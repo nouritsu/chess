@@ -9,8 +9,9 @@ use bevy::prelude::*;
 #[derive(Component)]
 struct HighlightMarker;
 
-#[derive(Resource, Debug, PartialEq, Eq)]
+#[derive(Resource, Debug, PartialEq, Eq, Default)]
 pub enum HighlightState {
+    #[default]
     Idle,
     FromSelected,
     Spawned,

@@ -7,7 +7,7 @@ use map_range::MapRange;
 use pleco::SQ;
 use std::ops::Range;
 
-#[derive(Component, Clone, Copy, Debug)]
+#[derive(Component, Debug, Clone, Copy)]
 #[require(Transform)]
 pub struct BoardPosition(pub SQ);
 

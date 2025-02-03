@@ -17,6 +17,6 @@ pub trait Handler {
         self.get_inner()
             .get(&key)
             .cloned()
-            .expect("failed to get handle, K SHOULD be an enum and must be initialized")
+            .expect("failed to get handle, hashmap must be initialized for every K")
     }
 }

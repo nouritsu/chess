@@ -4,7 +4,7 @@ use pleco::SQ;
 use std::collections::HashMap;
 use strum::VariantArray;
 
-#[derive(Resource)]
+#[derive(Resource, Default)]
 pub struct ColorHandler(HashMap<GameColor, Handle<ColorMaterial>>);
 
 #[derive(Component, Hash, Eq, PartialEq, Clone, Copy, VariantArray)]
@@ -56,25 +56,17 @@ impl Handler for ColorHandler {
     }
 }
 
-impl ColorHandler {
-    pub fn new() -> Self {
-        Self(HashMap::new())
-    }
-}
-
 fn init_color_handler(mut cmd: Commands, mut colors: ResMut<Assets<ColorMaterial>>) {
-    let mut color_handler = ColorHandler::new();
-    let black: Color = Srgba::from(GameColor::BoardBlack).into();
-    let white: Color = Srgba::from(GameColor::BoardWhite).into();
-    let green: Color = Srgba::from(GameColor::HighlightGreen).into();
+    let mut color_handler = ColorHandler::default();
 
-    color_handler.add(GameColor::BoardBlack, colors.add(black));
-    color_handler.add(GameColor::BoardWhite, colors.add(white));
-    color_handler.add(GameColor::HighlightGreen, colors.add(green));
+    for &color in GameColor::VARIANTS {
+        let srgba: Srgba = color.into();
+        color_handler.add(color, colors.add(Color::from(srgba)));
+    }
 
     cmd.insert_resource(color_handler);
 }
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(PreStartup, init_color_handler);
+    app.add_systems(Startup, init_color_handler);
 }
